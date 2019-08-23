@@ -1,0 +1,5 @@
+server:
+  port: 6379
+spring:
+  application:
+    name: piao-fake-redis

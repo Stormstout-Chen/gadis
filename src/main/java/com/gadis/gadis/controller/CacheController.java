@@ -1,6 +1,6 @@
 package com.gadis.gadis.controller;
 
-import com.gadis.gadis.lib.Cache;
+import com.gadis.gadis.lib.core.Cache;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

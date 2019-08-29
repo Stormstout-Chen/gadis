@@ -1,4 +1,4 @@
-package com.gadis.gadis.lib;
+package com.gadis.gadis.lib.core;
 
 //一条缓存
 public class CacheObj {
@@ -8,6 +8,10 @@ public class CacheObj {
     //过期时间
     private Long outTime;
 
+
+    /**
+     * C and G T
+     * */
     public CacheObj() {
     }
     public CacheObj(Object value, Long outTime) {

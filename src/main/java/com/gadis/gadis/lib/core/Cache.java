@@ -5,19 +5,30 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author Stormstout-Chen
+ */
 public class Cache {
 
-    //缓存容器
-    private static final ConcurrentHashMap<String, CacheObj> cacheMap = new ConcurrentHashMap();
+    /**
+     * 缓存容器
+     */
+    private static final ConcurrentHashMap<String, CacheObj> CACHE_MAP = new ConcurrentHashMap<>();
 
-    //最大容量
+    /**
+     * 最大容量
+     */
     private static Integer MAX_SIZE = 10000;
 
-    //操作日志，用于清理内存
-    private static List<String> operationLog = Collections.synchronizedList(new ArrayList<String>());
+    /**
+     * 操作日志，用于清理内存
+     */
+    private static List<String> operationLog = Collections.synchronizedList(new ArrayList<>());
 
-    //是否正在做缓存淘汰
-    private static volatile Boolean is_weeking_out = false;
+    /**
+     * 是否正在做缓存淘汰
+     */
+    private static volatile Boolean is_weeping_out = false;
 
     public static Boolean set(String k, Object value, Long time) {
 
@@ -29,12 +40,12 @@ public class Cache {
 
         CacheObj cacheObj = new CacheObj(value, outTime);
 
-        cacheMap.put(k, cacheObj);
+        CACHE_MAP.put(k, cacheObj);
 
         operationLog.removeAll(Collections.singleton(k));
         operationLog.add(k);
 
-        if (getSize() > MAX_SIZE + (MAX_SIZE >> 1) && !is_weeking_out) {
+        if (getSize() > MAX_SIZE + (MAX_SIZE >> 1) && !is_weeping_out) {
             weedOut();
         }
 
@@ -43,6 +54,7 @@ public class Cache {
 
     /**
      * TODO 方法报错了
+     *
      * @param k key
      * @return Value
      */
@@ -51,7 +63,7 @@ public class Cache {
         operationLog.removeAll(Collections.singleton(k));
         operationLog.add(k);
 
-        CacheObj cacheObj = cacheMap.get(k);
+        CacheObj cacheObj = CACHE_MAP.get(k);
 
         if (cacheObj == null || cacheObj.getOutTime() != null && cacheObj.getOutTime() < System.currentTimeMillis()) {
             return null;
@@ -62,12 +74,12 @@ public class Cache {
     }
 
     public static void remove(String k) {
-        cacheMap.remove(k);
+        CACHE_MAP.remove(k);
     }
 
     public static void flush() {
         operationLog.clear();
-        cacheMap.clear();
+        CACHE_MAP.clear();
     }
 
     /**
@@ -79,7 +91,7 @@ public class Cache {
         System.out.println("执行!");
         ArrayList<String> ksToRemove = new ArrayList<>(1000);
 
-        for (Map.Entry<String, CacheObj> cacheObj : cacheMap.entrySet()) {
+        for (Map.Entry<String, CacheObj> cacheObj : CACHE_MAP.entrySet()) {
 
             if (cacheObj.getValue().getOutTime() != null && cacheObj.getValue().getOutTime() < System.currentTimeMillis()) {
                 ksToRemove.add(cacheObj.getKey());
@@ -94,22 +106,24 @@ public class Cache {
     }
 
     public static Integer getSize() {
-        return cacheMap.size();
+        return CACHE_MAP.size();
     }
 
-    //缓存淘汰——优先淘汰最久未使用的缓存
+    /**
+     * 缓存淘汰——优先淘汰最久未使用的缓存
+     */
     private synchronized static void weedOut() {
 
-        if (is_weeking_out) {
+        if (is_weeping_out) {
             return;
         }
 
         if (getSize() <= MAX_SIZE + (MAX_SIZE >> 1)) {
-            is_weeking_out = false;
+            is_weeping_out = false;
             return;
         }
 
-        is_weeking_out = true;
+        is_weeping_out = true;
 
         Iterator<String> iterator = new ArrayList<>(operationLog).iterator();
 
@@ -126,16 +140,16 @@ public class Cache {
 
         }
 
-        is_weeking_out = false;
+        is_weeping_out = false;
 
     }
 
     public static ConcurrentHashMap<String, CacheObj> getBackUp() {
-        return cacheMap;
+        return CACHE_MAP;
     }
 
     public static void synchronizationBackUp(ConcurrentHashMap<String, CacheObj> map) {
-        cacheMap.clear();
-        cacheMap.putAll(map);
+        CACHE_MAP.clear();
+        CACHE_MAP.putAll(map);
     }
 }

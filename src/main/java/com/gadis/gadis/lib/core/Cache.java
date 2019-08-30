@@ -48,7 +48,7 @@ public class Cache {
 
         CacheObj cacheObj = cacheMap.get(k);
 
-        if (cacheObj == null || cacheObj.getOutTime() != null && cacheObj.getOutTime() < System.currentTimeMillis()){
+        if (cacheObj == null || cacheObj.getOutTime() != null && cacheObj.getOutTime() < System.currentTimeMillis()) {
             return null;
         }
 
@@ -67,9 +67,11 @@ public class Cache {
 
     /**
      * 清理过期缓存，每分钟跑一次
+     * TODO 此方法不执行
      */
     @Scheduled(cron = "0/1 0/1 * * * ?")
     public void retrieve() {
+        System.out.println("执行!");
         ArrayList<String> ksToRemove = new ArrayList<>(1000);
 
         for (Map.Entry<String, CacheObj> cacheObj : cacheMap.entrySet()) {
@@ -123,4 +125,7 @@ public class Cache {
 
     }
 
+    public static ConcurrentHashMap<String, CacheObj> getBackUp() {
+        return cacheMap;
+    }
 }

@@ -3,3 +3,9 @@ server:
 spring:
   application:
     name: piao-fake-redis
+
+back-up:
+#  windows地址
+  storage: F:\\FFOutput
+#  linux地址
+#  storage: /home/file/backup/

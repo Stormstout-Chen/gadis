@@ -3,15 +3,14 @@ package com.gadis.gadis.lib.persistence;
 import com.alibaba.fastjson.JSON;
 import com.gadis.gadis.lib.core.Cache;
 import com.gadis.gadis.lib.core.CacheObj;
-import okio.BufferedSink;
-import okio.Okio;
-import okio.Sink;
+import okio.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +46,8 @@ class BackUp {
         if (backUp == null || backUp.keySet().size() == 0) {
             return;
         }
+        //持久化文件
+        logger.info("持久化文件");
         String decodeString = JSON.toJSONString(backUp);
         byte[] decodeBytes = decodeString.getBytes();
         Base64.Encoder encoder = Base64.getEncoder();
@@ -114,5 +115,55 @@ class BackUp {
             throw new RuntimeException("写入失败");
         }
         return backUpDir;
+    }
+
+    @PostConstruct
+    public void readBackUp() {
+        //获得最后一次持久化文件
+        File backUpDir = new File(backUpStorage);
+        if (!backUpDir.exists()) {
+            return;
+        } else if (backUpDir.list() == null || backUpDir.list().length == 0) {
+            return;
+        }
+        String[] files = backUpDir.list();
+        if (files == null) {
+            return;
+        }
+        byte[] encodeByte = null;
+        try {
+            encodeByte = readCacheFile(files);
+        } catch (IOException e) {
+            e.printStackTrace();
+            //文件读取错误
+            logger.info("文件读取失败!");
+            throw new RuntimeException();
+        }
+        if (encodeByte == null) {
+            logger.info("读取失败");
+            throw new RuntimeException();
+        }
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] decode = decoder.decode(encodeByte);
+        String json = new String(decode);
+        ConcurrentHashMap<String, CacheObj> concurrentHashMap = JSON.parseObject(json, ConcurrentHashMap.class);
+        Cache.synchronizationBackUp(concurrentHashMap);
+    }
+
+    private byte[] readCacheFile(String[] files) throws IOException {
+        List<Long> timeList = new ArrayList<>();
+        for (String fileName : files) {
+            if (fileName.endsWith(".cache")) {
+                long time = Long.parseLong(fileName.substring(0, fileName.indexOf('.')));
+                timeList.add(time);
+            }
+        }
+        Collections.sort(timeList);
+        Long readTime = timeList.get(timeList.size() - 1);
+        String backUpPath = backUpStorage + "\\" + readTime + ".cache";
+        File backUp = new File(backUpPath);
+        Source source = Okio.source(backUp);
+        BufferedSource buffer = Okio.buffer(source);
+        return buffer.readByteArray();
     }
 }

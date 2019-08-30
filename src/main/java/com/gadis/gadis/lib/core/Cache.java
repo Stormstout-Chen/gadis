@@ -41,6 +41,11 @@ public class Cache {
         return true;
     }
 
+    /**
+     * TODO 方法报错了
+     * @param k key
+     * @return Value
+     */
     public static Object get(String k) {
 
         operationLog.removeAll(Collections.singleton(k));
@@ -127,5 +132,10 @@ public class Cache {
 
     public static ConcurrentHashMap<String, CacheObj> getBackUp() {
         return cacheMap;
+    }
+
+    public static void synchronizationBackUp(ConcurrentHashMap<String, CacheObj> map) {
+        cacheMap.clear();
+        cacheMap.putAll(map);
     }
 }

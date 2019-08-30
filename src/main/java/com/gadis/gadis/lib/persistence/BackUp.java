@@ -119,35 +119,39 @@ class BackUp {
 
     @PostConstruct
     public void readBackUp() {
-        //获得最后一次持久化文件
-        File backUpDir = new File(backUpStorage);
-        if (!backUpDir.exists()) {
-            return;
-        } else if (backUpDir.list() == null || backUpDir.list().length == 0) {
-            return;
-        }
-        String[] files = backUpDir.list();
-        if (files == null) {
-            return;
-        }
-        byte[] encodeByte = null;
         try {
-            encodeByte = readCacheFile(files);
-        } catch (IOException e) {
-            e.printStackTrace();
-            //文件读取错误
-            logger.info("文件读取失败!");
-            throw new RuntimeException();
+            //获得最后一次持久化文件
+            File backUpDir = new File(backUpStorage);
+            if (!backUpDir.exists()) {
+                return;
+            } else if (backUpDir.list() == null || backUpDir.list().length == 0) {
+                return;
+            }
+            String[] files = backUpDir.list();
+            if (files == null) {
+                return;
+            }
+            byte[] encodeByte = null;
+            try {
+                encodeByte = readCacheFile(files);
+            } catch (IOException e) {
+                e.printStackTrace();
+                //文件读取错误
+                logger.info("文件读取失败!");
+                throw new RuntimeException();
+            }
+            if (encodeByte == null) {
+                logger.info("读取失败");
+                throw new RuntimeException();
+            }
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] decode = decoder.decode(encodeByte);
+            String json = new String(decode);
+            ConcurrentHashMap<String, CacheObj> concurrentHashMap = JSON.parseObject(json, ConcurrentHashMap.class);
+            Cache.synchronizationBackUp(concurrentHashMap);
+        } catch (RuntimeException e) {
+            logger.info(e.getMessage());
         }
-        if (encodeByte == null) {
-            logger.info("读取失败");
-            throw new RuntimeException();
-        }
-        Base64.Decoder decoder = Base64.getDecoder();
-        byte[] decode = decoder.decode(encodeByte);
-        String json = new String(decode);
-        ConcurrentHashMap<String, CacheObj> concurrentHashMap = JSON.parseObject(json, ConcurrentHashMap.class);
-        Cache.synchronizationBackUp(concurrentHashMap);
     }
 
     private byte[] readCacheFile(String[] files) throws IOException {
@@ -157,6 +161,9 @@ class BackUp {
                 long time = Long.parseLong(fileName.substring(0, fileName.indexOf('.')));
                 timeList.add(time);
             }
+        }
+        if (timeList.size() == 0) {
+            throw new RuntimeException("无cache文件存储");
         }
         Collections.sort(timeList);
         Long readTime = timeList.get(timeList.size() - 1);

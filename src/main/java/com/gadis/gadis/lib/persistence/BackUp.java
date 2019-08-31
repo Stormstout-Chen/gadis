@@ -73,6 +73,9 @@ class BackUp {
                     }
                 }
             }
+            if (timeList.size() < 5) {
+                return;
+            }
             Collections.sort(timeList);
             List<Long> deleteList = timeList.subList(0, timeList.size() - 5);
             for (Long delete : deleteList) {
@@ -120,6 +123,7 @@ class BackUp {
     @PostConstruct
     public void readBackUp() {
         try {
+            logger.info("读取持久化文件");
             //获得最后一次持久化文件
             File backUpDir = new File(backUpStorage);
             if (!backUpDir.exists()) {

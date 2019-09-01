@@ -6,13 +6,14 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class GadisApplicationTests {
 
     @Test
     public void contextLoads() throws InterruptedException {
-
 
         Thread.sleep(10000);
 
@@ -73,6 +74,14 @@ public class GadisApplicationTests {
         long l2 = System.currentTimeMillis();
         System.out.println(l2-l1);
         System.out.println(Cache.getSize());
+    }
+
+    @Test
+    public void t2(){
+        ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
+        Object poll = queue.poll();
+        System.out.println(poll);
+        System.out.println(666);
     }
 
 }

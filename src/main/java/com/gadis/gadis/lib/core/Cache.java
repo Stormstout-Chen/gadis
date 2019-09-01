@@ -30,7 +30,7 @@ public class Cache {
      */
     private static volatile Boolean is_weeping_out = false;
 
-    public static Boolean set(String k, Object value, Long time) {
+    public static Boolean set(String k, String value, Long time) {
 
         if (time != null && time <= 0) {
             return false;
@@ -58,7 +58,7 @@ public class Cache {
      * @param k key
      * @return Value
      */
-    public static Object get(String k) {
+    public static String get(String k) {
 
         operationLog.removeAll(Collections.singleton(k));
         operationLog.add(k);
@@ -84,7 +84,7 @@ public class Cache {
 
     /**
      * 清理过期缓存，每分钟跑一次
-     * TODO 此方法不执行
+     * TODO 此方法不执行 执行的，只不过定时任务的线程绑定不到控制台上 O(∩_∩)O
      */
     @Scheduled(cron = "0/1 0/1 * * * ?")
     public void retrieve() {

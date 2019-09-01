@@ -1,10 +1,12 @@
 package com.gadis.gadis.lib.core;
 
+import com.alibaba.fastjson.JSON;
+
 //一条缓存
 public class CacheObj {
 
-    //内容
-    private Object value;
+    //内容 格式为json字符串
+    private String value;
     //过期时间
     private Long outTime;
 
@@ -14,17 +16,17 @@ public class CacheObj {
      * */
     public CacheObj() {
     }
-    public CacheObj(Object value, Long outTime) {
+    public CacheObj(String value, Long outTime) {
         this.value = value;
         this.outTime = outTime;
     }
 
-    public Object getValue() {
+    public String getValue() {
         return value;
     }
 
     public void setValue(Object value) {
-        this.value = value;
+        this.value = JSON.toJSONString(value);
     }
 
     public Long getOutTime() {

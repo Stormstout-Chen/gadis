@@ -1,5 +1,7 @@
 package com.gadis.gadis.lib.net;
 
+import com.alibaba.fastjson.JSON;
+
 import java.net.Socket;
 
 /**
@@ -82,5 +84,15 @@ public class Msg {
 
     public void setSocket(Socket socket) {
         this.socket = socket;
+    }
+
+    @Override
+    public String toString() {
+        return "Msg{" +
+                "method=" + method +
+                ", k='" + k + '\'' +
+                ", value='" + value + '\'' +
+                ", outTime=" + outTime +
+                '}';
     }
 }

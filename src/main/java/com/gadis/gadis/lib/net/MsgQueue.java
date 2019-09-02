@@ -2,13 +2,13 @@ package com.gadis.gadis.lib.net;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * @author Stormstout-Chen
+ * 待处理的消息队列
+ * 供唯一的处理线程逐一消费
+ */
 public class MsgQueue {
 
-    /**
-     * @author Stormstout-Chen
-     * 待处理的消息队列
-     * 供唯一的处理线程逐一消费
-     */
     public static ConcurrentLinkedQueue<Msg> queue = new ConcurrentLinkedQueue();
 
     public static void push(Msg msg) {

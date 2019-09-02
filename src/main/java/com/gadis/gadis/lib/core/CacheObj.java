@@ -21,9 +21,10 @@ public class CacheObj {
 
     /**
      * C and G T
-     * */
+     */
     public CacheObj() {
     }
+
     public CacheObj(String value, Long outTime) {
         this.value = value;
         this.outTime = outTime;

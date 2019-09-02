@@ -19,14 +19,14 @@ public class MsgOperator implements Runnable {
 
             //无消息则等待
 
-                if (MsgQueue.isEmpty()) {
-                    try {
-                        synchronized (MsgOperator.class) {
-                            MsgOperator.class.wait();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+            if (MsgQueue.isEmpty()) {
+                try {
+                    synchronized (MsgOperator.class) {
+                        MsgOperator.class.wait();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             operatorMsg(MsgQueue.poll());
@@ -52,7 +52,7 @@ public class MsgOperator implements Runnable {
             case 2: {
 
                 String value = Cache.get(msg.getK());
-                if (value == null){
+                if (value == null) {
                     value = "no such key";
                 }
 

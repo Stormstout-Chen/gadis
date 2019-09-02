@@ -5,34 +5,45 @@ import com.alibaba.fastjson.JSON;
 import java.net.Socket;
 
 /**
+ * @author Stormstout-Chen
  * 消息类
  * 封装一个请求的全部内容
  * 存入MsgQueue中，供消费线程逐一使用
-* */
+ */
 public class Msg {
 
-    //请求执行的方法
+    /**
+     * 请求执行的方法
+     */
     private Integer method;
 
-    //key值
+    /**
+     * key值
+     */
     private String k;
 
-    //数据内容
+    /**
+     * 数据内容
+     */
     private String value;
 
-    //过期时间
+    /**
+     * 过期时间
+     */
     private Long outTime;
 
-    //此消息对应的网路连接
+    /**
+     * 该消息的网路连接
+     */
     private Socket socket;
 
     /**
-    * C and G T
-    * */
+     * C and G T
+     */
     public Msg() {
     }
 
-    public Msg(Integer method, String k,Socket socket) {
+    public Msg(Integer method, String k, Socket socket) {
         this.method = method;
         this.k = k;
         this.socket = socket;

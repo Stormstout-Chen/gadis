@@ -9,6 +9,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 
+/**
+ * @author Stormstout-Chen
+ * 任务 接收请求，封装到MsgQuene
+ */
 public class NetWork implements Runnable {
     @Override
     public void run() {
@@ -17,13 +21,14 @@ public class NetWork implements Runnable {
 
             while (true) {
                 //sout
-                System.out.println("Quene Size:"+MsgQueue.getSize());
+                System.out.println("Quene Size:" + MsgQueue.getSize());
                 System.out.println(MsgQueue.queue);
 
                 Socket socket = serverSocket.accept();
+                InputStream inputStream = null;
                 try {
                     //获取输入流
-                    InputStream inputStream = socket.getInputStream();
+                    inputStream = socket.getInputStream();
 
                     //获取请求内容，格式为，首行为请求的方法，之后为请求的参数 顺序为K,value,time,后两项可不传 全部由换行符分割
                     byte[] bytes = new byte[1024];
@@ -46,20 +51,20 @@ public class NetWork implements Runnable {
 
                             Long outTime = requestBody.length == 4 ? Long.valueOf(requestBody[3]) : null;
 
-                            Msg msg = new Msg(method, requestBody[1], requestBody[2], outTime , socket);
+                            Msg msg = new Msg(method, requestBody[1], requestBody[2], outTime, socket);
                             MsgQueue.push(msg);
-                            synchronized (MsgOperator.class){
+                            synchronized (MsgOperator.class) {
                                 MsgOperator.class.notifyAll();
                             }
                             break;
                         }
                         //get
                         case 2:
-                        //remove
+                            //remove
                         case 3: {
                             Msg msg = new Msg(method, requestBody[1], socket);
                             MsgQueue.push(msg);
-                            synchronized (MsgOperator.class){
+                            synchronized (MsgOperator.class) {
                                 MsgOperator.class.notifyAll();
                             }
                             break;

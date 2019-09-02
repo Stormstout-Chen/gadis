@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Stormstout-Chen
+ * 核心业务类
  */
 public class Cache {
 

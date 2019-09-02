@@ -2,12 +2,20 @@ package com.gadis.gadis.lib.core;
 
 import com.alibaba.fastjson.JSON;
 
-//一条缓存
+/**
+ * @author Stormstout-Chen
+ * 一条缓存
+ */
 public class CacheObj {
 
-    //内容 格式为json字符串
+    /**
+     * 缓存内容 格式为json字符串
+     */
     private String value;
-    //过期时间
+
+    /**
+     * 缓存过期时间
+     */
     private Long outTime;
 
 

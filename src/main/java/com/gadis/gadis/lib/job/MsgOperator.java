@@ -7,6 +7,10 @@ import com.gadis.gadis.lib.net.MsgQueue;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * @author Stormstout-Chen
+ * 任务 业务处理，请求响应
+ */
 public class MsgOperator implements Runnable {
     @Override
     public void run() {
@@ -65,6 +69,7 @@ public class MsgOperator implements Runnable {
                         if (outputStream != null) {
                             outputStream.close();
                         }
+                        msg.getSocket().getInputStream().close();
                         msg.getSocket().close();
                     } catch (IOException e) {
                     }

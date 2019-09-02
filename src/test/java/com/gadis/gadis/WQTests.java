@@ -1,7 +1,5 @@
 package com.gadis.gadis;
 
-import com.gadis.gadis.lib.net.Msg;
-import com.gadis.gadis.lib.net.MsgQueue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

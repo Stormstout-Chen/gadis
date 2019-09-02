@@ -29,9 +29,9 @@ public class Cache {
     /**
      * 是否正在做缓存淘汰
      */
-    private static volatile Boolean is_weeping_out = false;
+    private static volatile Boolean is_weeding_out = false;
 
-    public static Boolean set(String k, String value, Long time) {
+    public synchronized static Boolean set(String k, String value, Long time) {
 
         if (time != null && time <= 0) {
             return false;
@@ -46,7 +46,7 @@ public class Cache {
         operationLog.removeAll(Collections.singleton(k));
         operationLog.add(k);
 
-        if (getSize() > MAX_SIZE + (MAX_SIZE >> 1) && !is_weeping_out) {
+        if (getSize() > MAX_SIZE + (MAX_SIZE >> 1)) {
             weedOut();
         }
 
@@ -89,19 +89,23 @@ public class Cache {
      */
     @Scheduled(cron = "0/1 0/1 * * * ?")
     public void retrieve() {
-        System.out.println("执行!");
-        ArrayList<String> ksToRemove = new ArrayList<>(1000);
 
-        for (Map.Entry<String, CacheObj> cacheObj : CACHE_MAP.entrySet()) {
+        //做淘汰时不能set
+        synchronized (Cache.class){
 
-            if (cacheObj.getValue().getOutTime() != null && cacheObj.getValue().getOutTime() < System.currentTimeMillis()) {
-                ksToRemove.add(cacheObj.getKey());
+            ArrayList<String> ksToRemove = new ArrayList<>(1000);
+
+            for (Map.Entry<String, CacheObj> cacheObj : CACHE_MAP.entrySet()) {
+
+                if (cacheObj.getValue().getOutTime() != null && cacheObj.getValue().getOutTime() < System.currentTimeMillis()) {
+                    ksToRemove.add(cacheObj.getKey());
+                }
+
             }
 
-        }
-
-        for (String k : ksToRemove) {
-            remove(k);
+            for (String k : ksToRemove) {
+                remove(k);
+            }
         }
 
     }
@@ -114,17 +118,6 @@ public class Cache {
      * 缓存淘汰——优先淘汰最久未使用的缓存
      */
     private synchronized static void weedOut() {
-
-        if (is_weeping_out) {
-            return;
-        }
-
-        if (getSize() <= MAX_SIZE + (MAX_SIZE >> 1)) {
-            is_weeping_out = false;
-            return;
-        }
-
-        is_weeping_out = true;
 
         Iterator<String> iterator = new ArrayList<>(operationLog).iterator();
 
@@ -140,8 +133,6 @@ public class Cache {
             operationLog.remove(k);
 
         }
-
-        is_weeping_out = false;
 
     }
 

@@ -130,7 +130,7 @@ public class Cache {
 
             k = iterator.next();
             remove(k);
-            operationLog.remove(k);
+            iterator.remove();
 
         }
 

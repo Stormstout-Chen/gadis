@@ -1,5 +1,7 @@
 package com.gadis.gadis.lib.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.*;
@@ -11,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Cache {
 
+    private static Logger logger = LoggerFactory.getLogger(Cache.class);
     /**
      * 缓存容器
      */
@@ -87,9 +90,21 @@ public class Cache {
      * 清理过期缓存，每分钟跑一次
      * TODO 此方法不执行 执行的，只不过定时任务的线程绑定不到控制台上 O(∩_∩)O
      */
-    @Scheduled(cron = "0/1 0/1 * * * ?")
-    public void retrieve() {
 
+    //TODO 执行个大鸡吧,
+    //  特么log也不打,
+    // 错也不报 cron还写错了
+    // 你自己好好瞅瞅是不是丢数据了
+    // 玛丽戈壁还信誓旦旦说不绑定控制台
+    // 我特么那corn怎么绑定控制台了??
+    // 还他妈发表情
+    // 狗逼 O(∩_∩)O
+    @Scheduled(cron = "0 * * * * ?")
+    public void retrieve() {
+        logger.info("执行了?");
+        int i = 1 / 0;
+        System.out.println(i);
+        System.out.println("执行!!!");
         //做淘汰时不能set
         synchronized (Cache.class){
 
